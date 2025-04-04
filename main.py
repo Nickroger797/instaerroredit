@@ -3,12 +3,13 @@ from pyrogram.types import Message
 import requests
 import re
 import os
+from bs4 import BeautifulSoup
 
 API_ID = int(os.environ.get("API_ID"))
 API_HASH = os.environ.get("API_HASH")
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
-bot = Client("reel_downloader_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+bot = Client("igram_reel_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 def extract_instagram_url(text):
     regex = r"(https?://www\.instagram\.com/reel/[^\s]+)"
@@ -28,24 +29,18 @@ async def reel_downloader(_, message: Message):
     msg = await message.reply_text("Downloading reel...")
 
     try:
-        api_url = f"https://saveig.app/api/ajaxSearch"
         headers = {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "X-Requested-With": "XMLHttpRequest",
-            "Referer": "https://saveig.app/en",
-            "User-Agent": "Mozilla/5.0"
+            "User-Agent": "Mozilla/5.0",
+            "Content-Type": "application/x-www-form-urlencoded"
         }
-        data = {"q": url}
-        response = requests.post(api_url, headers=headers, data=data)
-        result = response.json()
+        data = {"url": url}
+        response = requests.post("https://igram.io/i/", headers=headers, data=data)
+        soup = BeautifulSoup(response.text, "html.parser")
+        video_link = soup.find("a", {"class": "btn btn-light"})["href"]
 
-        if "links" in result and result["links"]:
-            video_url = result["links"][0]["url"]
-            await message.reply_video(video=video_url, caption="Here is your reel!")
-        else:
-            await message.reply_text("Failed to fetch the reel. Make sure the link is public.")
+        await message.reply_video(video=video_link, caption="Here is your reel!")
     except Exception as e:
-        await message.reply_text("Something went wrong while downloading.")
+        await message.reply_text("Failed to download. Make sure the link is public.")
         print(e)
     finally:
         await msg.delete()
