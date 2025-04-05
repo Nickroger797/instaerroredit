@@ -1,11 +1,10 @@
-from fastapi import FastAPI
-import uvicorn
+from flask import Flask
 
-app = FastAPI()
+app = Flask(__name__)
 
-@app.get("/")
-def read_root():
-    return {"status": "running"}
+@app.route('/')
+def home():
+    return "Bot is running!"
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
