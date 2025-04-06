@@ -1,8 +1,8 @@
 import os
 import re
 import instaloader
-from command import *  # ये बहुत ज़रूरी है ताकि handlers register हों
 from pyrogram import Client, filters
+from command import register_handlers
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from script import start_text, about_text, help_text
 
@@ -75,4 +75,5 @@ async def reel_handler(bot, message: Message):
 
     await msg.delete()
 
+register_handlers(bot)
 bot.run()
