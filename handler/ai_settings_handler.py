@@ -1,11 +1,8 @@
-# handlers/ai_settings_handler.py
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 from database.ai_config import get_user_config, toggle_feature
-from bot import bot
 
 async def ai_settings_handler(bot, message: Message):
     features = await get_user_config(message.from_user.id)
-
     buttons = [
         [
             InlineKeyboardButton(
@@ -28,19 +25,11 @@ async def ai_settings_handler(bot, message: Message):
             )
         ]
     ]
-
-    await message.reply_text(
-        "Choose which AI features you want to enable/disable:",
-        reply_markup=InlineKeyboardMarkup(buttons)
-    )
+    await message.reply_text("Choose which AI features you want to enable/disable:",
+                             reply_markup=InlineKeyboardMarkup(buttons))
 
 async def toggle_callback(bot, query: CallbackQuery):
     feature = query.data.replace("toggle_", "")
     status = await toggle_feature(query.from_user.id, feature)
-
-    await query.answer(
-        f"{feature.replace('_', ' ').title()} {'Enabled' if status else 'Disabled'}",
-        show_alert=True
-    )
-
+    await query.answer(f"{feature.replace('_', ' ').title()} {'Enabled' if status else 'Disabled'}", show_alert=True)
     await ai_settings_handler(bot, query.message)
