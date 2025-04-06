@@ -3,6 +3,7 @@ import instaloader
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import re
+from database.toggles import get_config, update_config
 
 from script import start_text, help_text, about_text, ai_features_text
 
