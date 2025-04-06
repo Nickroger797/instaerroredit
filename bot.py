@@ -84,4 +84,35 @@ async def callback_handler(client, callback_query):
     elif data == "ai_features":
         await callback_query.message.edit_text(ai_features_text, reply_markup=callback_query.message.reply_markup)
 
+@bot.on_message(filters.command("settings") & filters.user(OWNER_ID))
+async def settings(_, message: Message):
+    config = await get_config()
+
+    buttons = [
+        [
+            InlineKeyboardButton(f"Caption Extractor: {'✅' if config['caption_extractor'] else '❌'}", callback_data="toggle_caption_extractor"),
+        ],
+        [
+            InlineKeyboardButton(f"Auto Caption Generator: {'✅' if config['caption_generator'] else '❌'}", callback_data="toggle_caption_generator"),
+        ],
+        [
+            InlineKeyboardButton(f"Text-to-Speech: {'✅' if config['tts'] else '❌'}", callback_data="toggle_tts"),
+        ],
+        [
+            InlineKeyboardButton(f"Enhancement: {'✅' if config['enhancer'] else '❌'}", callback_data="toggle_enhancer"),
+        ]
+    ]
+
+    await message.reply("AI Feature Settings:", reply_markup=InlineKeyboardMarkup(buttons))
+
+@bot.on_callback_query()
+async def toggle_feature(client, callback_query):
+    data = callback_query.data
+    key = data.replace("toggle_", "")
+    config = await get_config()
+    new_value = not config[key]
+    await update_config(key, new_value)
+    await callback_query.answer(f"{key.replace('_', ' ').title()} {'Enabled' if new_value else 'Disabled'}")
+    await settings(client, callback_query.message)
+
 bot.run()
