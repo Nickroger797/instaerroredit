@@ -40,26 +40,39 @@ async def callback_handler(client, callback_query):
     elif data == "help":
         await callback_query.message.edit_text(help_text, reply_markup=callback_query.message.reply_markup)
 
-@bot.on_message(filters.text & ~filters.command(["reel"]))
-async def reel_downloader(_, message: Message):
-    url = message.text.strip()
-    shortcode = extract_shortcode(url)
+@bot.on_message(filters.text & filters.private)
+async def reel_handler(bot, message: Message):
+    text = message.text.strip()
 
-    if not shortcode:
+    # Commands को skip करो
+    if text.startswith("/"):
+        return
+
+    # अगर valid reel URL नहीं है तो error भेजो
+    if "instagram.com/reel/" not in text:
         return await message.reply_text("❌ Invalid Instagram Reel URL.")
 
     msg = await message.reply_text("⏳ Downloading reel...")
 
     try:
+        shortcode = extract_shortcode(text)
+        if not shortcode:
+            return await msg.edit("❌ Invalid Instagram Reel URL.")
+
         post = instaloader.Post.from_shortcode(loader.context, shortcode)
         video_url = post.video_url
+        caption = post.caption or "Instagram Reel"
 
-        await message.reply_video(video=video_url, caption=post.caption or "Instagram Reel")
+        await bot.send_video(
+            chat_id=message.chat.id,
+            video=video_url,
+            caption=caption
+        )
 
     except Exception as e:
         print("Error:", e)
-        await message.reply_text("⚠️ Failed to fetch reel. Make sure it's *public*.")
-    
+        await msg.edit("⚠️ Failed to fetch reel. Make sure it's *public*.")
+
     await msg.delete()
 
 bot.run()
