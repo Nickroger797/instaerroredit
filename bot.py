@@ -40,7 +40,7 @@ async def callback_handler(client, callback_query):
     elif data == "help":
         await callback_query.message.edit_text(help_text, reply_markup=callback_query.message.reply_markup)
 
-@bot.on_message(filters.text & ~filters.command(["start"]))
+@bot.on_message(filters.text & ~filters.command(["reel"]))
 async def reel_downloader(_, message: Message):
     url = message.text.strip()
     shortcode = extract_shortcode(url)
