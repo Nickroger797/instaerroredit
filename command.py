@@ -1,6 +1,6 @@
 # commands/ai_settings.py
 from pyrogram import filters
-from handlers.ai_settings_handler import ai_settings_handler, toggle_callback
+from handler.ai_settings_handler import ai_settings_handler, toggle_callback
 from bot import bot
 
 bot.add_handler(
