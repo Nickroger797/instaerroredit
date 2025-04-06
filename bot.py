@@ -1,7 +1,7 @@
 import os
 import re
 import instaloader
-from handler.ai_settings_handler import *
+import command
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from script import start_text, about_text, help_text
