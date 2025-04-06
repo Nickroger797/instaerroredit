@@ -1,9 +1,11 @@
-from pyrogram import filters, handlers
+from pyrogram import filters
 from handler.ai_settings_handler import ai_settings_handler, toggle_callback
-from bot import bot
 
-# Registering the command handler
-bot.add_handler(handlers.MessageHandler(ai_settings_handler, filters.command("ai_settings")))
+def register_handlers(bot):
+    @bot.on_message(filters.command("ai_settings"))
+    async def handle_ai_settings(client, message):
+        await ai_settings_handler(client, message)
 
-# Registering the callback query handler
-bot.add_handler(handlers.CallbackQueryHandler(toggle_callback, filters.regex("toggle_")))
+    @bot.on_callback_query(filters.regex("toggle_"))
+    async def handle_toggle_callback(client, callback_query):
+        await toggle_callback(client, callback_query)
