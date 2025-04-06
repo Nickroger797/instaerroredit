@@ -1,7 +1,7 @@
 # handlers/ai_settings_handler.py
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from ai_tools.ai_config import get_user_config, toggle_feature
+from database.ai_config import get_user_config, toggle_feature
 
 @Client.on_message(filters.command("ai_settings"))
 async def ai_settings_handler(bot, message: Message):
