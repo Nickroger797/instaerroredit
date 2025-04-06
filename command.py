@@ -1,5 +1,5 @@
 from pyrogram import filters, handlers
-from handlers.ai_settings_handler import ai_settings_handler, toggle_callback
+from handler.ai_settings_handler import ai_settings_handler, toggle_callback
 from bot import bot
 
 # Registering the command handler
